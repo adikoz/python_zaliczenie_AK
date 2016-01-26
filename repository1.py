@@ -3,22 +3,14 @@
 import sqlite3
 from datetime import datetime
 
-#
-# Ścieżka połączenia z bazą danych
-#
 db_path = 'zadanie_AK.db'
 
-#
-# Wyjątek używany w repozytorium
-#
 class RepositoryException(Exception):
     def __init__(self, message, *errors):
         Exception.__init__(self, message)
         self.errors = errors
 
-#
-# Model danych
-#
+
 class Klient():
 
     def __init__(self, id_klient, nazwa, imie, nazwisko, pesel, miasto, produkt_kredytowy=[]):
@@ -91,7 +83,7 @@ class Repository():
                     raise RepositoryException(*e.args)
 
 #
-# repozytorium obiektow typu Invoice
+# repozytorium obiektow
 #
 class KlRepository(Repository):
 
@@ -111,7 +103,6 @@ class KlRepository(Repository):
                                 )
 
                     except Exception as e:
-                        #print "item add error:", e
                         raise RepositoryException('error adding: %s, to komunikat bledu: %s' %
                                                     (str(klient), e)
                                                 )
@@ -130,7 +121,6 @@ class KlRepository(Repository):
             c.execute('DELETE FROM produkt_kredytowy WHERE id_klient=?', (id_klient,))
 
         except Exception as e:
-            #print "invoice delete error:", e
             raise RepositoryException('error deleting %s' % str(e))
 
     def getById(self, id):
@@ -138,7 +128,6 @@ class KlRepository(Repository):
             c = self.conn.cursor()
             c.execute("SELECT * FROM klient WHERE id_klient=?", (id,))
             row = c.fetchone()
-           # klient = Klient(id_klient=id)
             pk=[]
             if row == None:
                 klient = None
@@ -150,7 +139,6 @@ class KlRepository(Repository):
                     pk = Produkt_kredytowy(id_klient=id, nr_wniosku=i_rows[1], kwota_kredytu=i_rows[2], oprocentowanie=i_rows[3])   
                     klient.produkt_kredytowy.append(pk)
         except Exception as e:
-            #print "invoice getById error:", e
             raise RepositoryException('error getting by id klient: %s' % str(e))
         return klient
 
@@ -160,13 +148,11 @@ class KlRepository(Repository):
         try:
             K_oryg = self.getById(klient.id_klient)
             if K_oryg != None:
-                # pozycja jest w bazie: usuń ją
                 self.delete(klient.id_klient)
             self.add(klient)
 
         except Exception as e:
-            #print "invoice update error:", e
-            raise RepositoryException('error updating invoice %s' % str(e))
+            raise RepositoryException('error updating %s' % str(e))
 
     def sumaKredytowKlienta(self, id):
 
@@ -179,7 +165,6 @@ class KlRepository(Repository):
             else:
                 suma_kredytow_klienta=row[0]
          except Exception as e:
-            #print "aktor getMax error:", e
             raise RepositoryException('error getting suma: %s' % str(e))
          return suma_kredytow_klienta
 
@@ -194,7 +179,6 @@ class KlRepository(Repository):
             else:
                 suma_kredytow_klienta=row[0]
          except Exception as e:
-            #print "aktor getMax error:", e
             raise RepositoryException('error getting suma: %s' % str(e))
          return suma_kredytow_klienta
 
@@ -210,8 +194,7 @@ class KlRepository(Repository):
             else:
                 suma_kredytow_klienta=row[0]
          except Exception as e:
-            #print "aktor getMax error:", e
-            raise RepositoryException('error getting suma: %s' % str(e))
+            raise RepositoryException('error getting srednia: %s' % str(e))
          return suma_kredytow_klienta
 
         
